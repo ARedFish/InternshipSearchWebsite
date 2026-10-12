@@ -1,4 +1,5 @@
 using IntershipSearchWebsite.Components;
+using InternshipSearchWebsite.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
