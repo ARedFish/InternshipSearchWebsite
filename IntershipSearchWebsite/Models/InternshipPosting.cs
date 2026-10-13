@@ -10,4 +10,5 @@ public class InternshipPosting
     public string Description { get; set; } = string.Empty;
     public DateTime? Deadline { get; set; } // New deadline property
     public List<string> Tags { get; set; } = new();
+    public string Url { get; set; } = string.Empty;
 }

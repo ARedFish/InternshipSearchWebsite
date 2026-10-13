@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer 
+@implements IDisposable
 @inject InternshipSearchService SearchService
 
 <PageTitle>Internship Search</PageTitle>
@@ -78,12 +79,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await PerformSearch(); // Load everything initially
+        SearchService.OnDataUpdated += HandleDataUpdate;
+
+        await PerformSearch(); 
+    
+    }
+
+    private async void HandleDataUpdate()
+    {
+        await PerformSearch();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task PerformSearch()
     {
         // Ask the service to filter the mock data based on the user's text
         results = await SearchService.SearchAsync(searchText);
+    }
+
+    public void Dispose()
+    {
+        SearchService.OnDataUpdated -= HandleDataUpdate;
     }
 }

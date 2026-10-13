@@ -84,3 +84,6 @@
 /Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/obj/Debug/net10.0/IntershipSearchWebsite.pdb
 /Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/obj/Debug/net10.0/IntershipSearchWebsite.genruntimeconfig.cache
 /Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/obj/Debug/net10.0/ref/IntershipSearchWebsite.dll
+/Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/bin/Debug/net10.0/HtmlAgilityPack.dll
+/Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/obj/Debug/net10.0/IntershipSearchWebsite.csproj.AssemblyReference.cache
+/Users/nicholaschung/Documents/Projects/InternshipSearchWebsite/IntershipSearchWebsite/obj/Debug/net10.0/Intershi.A53ED8CD.Up2Date

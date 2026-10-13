@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<InternshipSearchService>();
+builder.Services.AddSingleton<InternshipSearchService>();
+builder.Services.AddHostedService<ScraperBackgroundService>();
 
 var app = builder.Build();
 
