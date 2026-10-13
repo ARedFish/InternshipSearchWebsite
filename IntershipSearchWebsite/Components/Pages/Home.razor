@@ -5,23 +5,26 @@
 
 <PageTitle>Internship Search</PageTitle>
 
-<div class="container mt-4">
-    <h1 class="mb-4">Find Your Internship</h1>
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bolder">Find Your Summer 2027 Internship</h1>
+        <p class="text-muted">Browse the latest software engineering, data, and tech roles.</p>
+    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-8 mb-2">
-
-            <input type="text" 
-                   class="form-control form-control-lg" 
-                   placeholder="Search by role, company, or keyword (e.g., C#, Data)..." 
-                   @bind="searchText" 
-                   @bind:event="oninput" 
-                   @onkeyup="PerformSearch" />
-        </div>
-        <div class="col-md-4">
-            <button class="btn btn-primary btn-lg w-100" @onclick="PerformSearch">
-                Search
-            </button>
+    <!-- Search Bar -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="input-group input-group-lg shadow-sm">
+                <input type="text" 
+                       class="form-control border-0" 
+                       placeholder="Search by role, company, or location..." 
+                       @bind="searchText" 
+                       @bind:event="oninput" 
+                       @onkeyup="PerformSearch" />
+                <button class="btn btn-primary px-4" @onclick="PerformSearch">
+                    Search
+                </button>
+            </div>
         </div>
     </div>
 
@@ -29,42 +32,78 @@
     <div class="row g-4">
         @if (results == null)
         {
-            <p><em>Loading...</em></p>
+            <div class="col-12 text-center mt-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Fetching latest jobs...</p>
+            </div>
         }
         else if (results.Count == 0)
         {
-            <div class="alert alert-warning">No internships found matching "@searchText".</div>
+            <div class="col-12">
+                <div class="alert alert-warning text-center shadow-sm border-0">
+                    No internships found matching "<strong>@searchText</strong>"
+                </div>
+            </div>
         }
         else
         {
             @foreach (var job in results)
             {
-                <div class="col-12 col-md-6">
-                    <div class="card h-100 shadow-sm border-0 bg-light">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title text-primary fw-bold mb-0">@job.Title</h5>
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100 shadow-sm border-0 job-card">
+                        <div class="card-body p-4">
+                            
+                            <!-- Badges Row -->
+                            <div class="d-flex gap-2 mb-2">
                                 @if (job.IsRemote)
                                 {
-                                    <span class="badge bg-success">Remote</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Remote</span>
+                                }
+                                @if (job.AdvancedDegreeRequired)
+                                {
+                                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25">Advanced Degree Required</span>
+                                }
+                                @if (job.Tags != null)
+                                {
+                                    @foreach (var tag in job.Tags)
+                                    {
+                                        <span class="badge bg-light text-dark border">@tag</span>
+                                    }
                                 }
                             </div>
-                            
-                            <h6 class="card-subtitle mb-3 text-muted">
-                                @job.Company &bull; @job.Location
+
+                            <!-- Title & Company -->
+                            <h4 class="card-title fw-bold mb-1">@job.Title</h4>
+                            <h6 class="card-subtitle mb-3 text-primary fw-semibold">
+                                @job.Company
                             </h6>
                             
-                            <p class="card-text">@job.Description</p>
-                            
-                            <div class="mb-3">
-                                @foreach (var tag in job.Tags)
-                                {
-                                    <span class="badge bg-white text-dark border me-1">@tag</span>
-                                }
+                            <!-- Location -->
+                            <div class="text-muted small mb-3">
+                                @job.Location
                             </div>
+                            
+                            <!-- Description -->
+                            @if (!string.IsNullOrWhiteSpace(job.Description))
+                            {
+                                <p class="card-text text-secondary small">@job.Description</p>
+                            }
                         </div>
-                        <div class="card-footer bg-white text-danger fw-bold border-top-0">
-                            Deadline: @job.Deadline?.ToString("MMMM dd, yyyy")
+
+                        <!-- Action Footer -->
+                        <div class="card-footer bg-transparent border-0 p-4 pt-0 d-flex justify-content-end">
+                            @if (job.Url == "Closed")
+                            {
+                                <button class="btn btn-secondary disabled w-100 fw-bold" style="max-width: 150px;">
+                                    Closed
+                                </button>
+                            }
+                            else
+                            {
+                                <a href="@job.Url" target="_blank" class="btn btn-primary fw-bold w-100 shadow-sm" style="max-width: 150px;">
+                                    Apply Now &rarr;
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -73,6 +112,16 @@
     </div>
 </div>
 
+<style>
+    .job-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .job-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>
+
 @code {
     private string searchText = string.Empty;
     private List<InternshipPosting>? results;
@@ -80,9 +129,7 @@
     protected override async Task OnInitializedAsync()
     {
         SearchService.OnDataUpdated += HandleDataUpdate;
-
         await PerformSearch(); 
-    
     }
 
     private async void HandleDataUpdate()
@@ -93,7 +140,6 @@
 
     private async Task PerformSearch()
     {
-        // Ask the service to filter the mock data based on the user's text
         results = await SearchService.SearchAsync(searchText);
     }
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IntershipSearchWebsite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67810abd0a83d6512ec3f477d0e62b744e4f3439")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4916639a98ba64cd8c7247180f10b00cbdb4d7b4")]
 [assembly: System.Reflection.AssemblyProductAttribute("IntershipSearchWebsite")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IntershipSearchWebsite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

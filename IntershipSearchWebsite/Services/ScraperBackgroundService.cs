@@ -20,9 +20,8 @@ public class ScraperBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using PeriodicTimer timer = new(TimeSpan.FromSeconds(30)); 
+        using PeriodicTimer timer = new(TimeSpan.FromHours(1)); 
         
-        // Keep HttpClient outside the loop
         using HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "CSharp-Internship-Scraper");
         
@@ -37,7 +36,6 @@ public class ScraperBackgroundService : BackgroundService
                 string rawUrl = "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/README.md";
                 string rawContent = await client.GetStringAsync(rawUrl, stoppingToken);
 
-                // Load the raw markdown string into HtmlAgilityPack
                 var doc = new HtmlDocument();
                 doc.LoadHtml(rawContent);
 
@@ -58,8 +56,10 @@ public class ScraperBackgroundService : BackgroundService
                         
                         if (cols != null && cols.Count >= 4)
                         {
-                            // 1. Get Company
+                            // Get Company
                             string companyText = cols[0].InnerText.Trim();
+                            bool advancedDegreeRequired = false;
+                            bool isRemote = false;
                             
                             // Carry over the company name if they use the ↳ character
                             if (companyText == "↳" || string.IsNullOrEmpty(companyText))
@@ -73,40 +73,49 @@ public class ScraperBackgroundService : BackgroundService
                                 lastCompany = companyText;
                             }
 
-                            // 2. Get Role
+                            // Get Role
                             string roleText = cols[1].InnerText.Trim();
 
-                            // 3. Get Location (Replace <br> with commas so "SF<br>NYC" becomes "SF, NYC")
+                            if (roleText.Contains("🎓"))
+                            {
+                                roleText = roleText.Replace("🎓", "");
+                                advancedDegreeRequired = true;
+                            }
+
+                            // Get Location 
                             string locationHtml = cols[2].InnerHtml.Replace("<br>", ", ").Replace("<br/>", ", ");
                             
-                            // Reload into a temporary node to strip the rest of the HTML (like <details> tags)
+                            // Strip the rest of the HTML 
                             var tempDoc = new HtmlDocument();
                             tempDoc.LoadHtml(locationHtml);
                             string locationText = tempDoc.DocumentNode.InnerText.Trim();
                             
-                            // Optional: clean up the "4 locations" prefix from the dropdown
+                            // Remove 4 locations prefix
                             if (locationText.Contains("locations"))
                             {
-                                // Splits "4 locationsSF, Bellevue" into just the locations
                                 locationText = locationText.Substring(locationText.IndexOf("locations") + 9).Trim();
                             }
 
-                            // 4. Get Application Link
-                            // Selects the first <a> tag inside the 4th column
+                            // Check if remote
+                            if (locationText.Contains("remote", StringComparison.OrdinalIgnoreCase))
+                            {
+                                isRemote = true;
+                            }
+
                             var linkNode = cols[3].SelectSingleNode(".//a");
                             string applyLink = linkNode != null ? linkNode.GetAttributeValue("href", "No Link") : "Closed";
 
                             Console.WriteLine($"Found: {roleText} at {companyText} | Loc: {locationText}");
-                            // Console.WriteLine($"Link: {applyLink}");
 
                             foundCount++;
 
-                            // Stage 2 Database Logic:
                             var job = new InternshipPosting { 
                                 Company = companyText, 
                                 Title = roleText, 
                                 Location = locationText,
-                                Url = applyLink
+                                Url = applyLink,
+                                AdvancedDegreeRequired = advancedDegreeRequired,
+                                IsRemote = isRemote
                             };
                             internshipPostings.Add(job);
 

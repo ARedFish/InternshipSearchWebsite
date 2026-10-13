@@ -8,7 +8,8 @@ public class InternshipPosting
     public string Location { get; set; } = string.Empty;
     public bool IsRemote { get; set; }
     public string Description { get; set; } = string.Empty;
-    public DateTime? Deadline { get; set; } // New deadline property
+    // public DateTime? Deadline { get; set; }
     public List<string> Tags { get; set; } = new();
     public string Url { get; set; } = string.Empty;
+    public bool AdvancedDegreeRequired {get; set; }
 }
