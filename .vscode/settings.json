@@ -1,3 +1,5 @@
 {
-    "dotnet.defaultSolution": "IntershipSearchWebsite.slnx"
+    "dotnet.defaultSolution": "IntershipSearchWebsite.slnx",
+    "appService.defaultWebAppToDeploy": "/subscriptions/88b2fc33-076a-4653-ab58-1f66bf15bf3e/resourceGroups/appsvc_windows_northcentralus/providers/Microsoft.Web/sites/Internship-Search-Website",
+    "appService.deploySubpath": "IntershipSearchWebsite/bin/Release/net10.0/publish"
 }
